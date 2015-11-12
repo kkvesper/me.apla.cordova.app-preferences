@@ -4,7 +4,7 @@
  *
  */
 'use strict';
-	
+
 var commonMappings = {
 	title: {
 		ios: "Title",
@@ -116,6 +116,17 @@ module.exports = {
 			// IsSecure
 			// AutocapitalizationType
 			// AutocorrectionType
+			key:     commonMappings.key,
+			title:   commonMappings.title,
+			default: commonMappings.default,
+		}
+	},
+	title: {
+		ios: "PSTitleValueSpecifier",
+		android: "EditTextPreference",
+		types: "string",
+		required: ["key"],
+		attrs: {
 			key:     commonMappings.key,
 			title:   commonMappings.title,
 			default: commonMappings.default,
