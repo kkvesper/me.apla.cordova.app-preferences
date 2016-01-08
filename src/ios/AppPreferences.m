@@ -21,7 +21,12 @@
 - (void)defaultsChanged:(NSNotification *)notification {
 
 	NSString * jsCallBack = [NSString stringWithFormat:@"cordova.fireDocumentEvent('preferencesChanged');"];
+
+#ifdef __CORDOVA_4_0_0
+	[self.webViewEngine evaluateJavaScript:jsCallBack completionHandler:nil];
+#else
 	[self.webView stringByEvaluatingJavaScriptFromString:jsCallBack];
+#endif
 }
 
 
@@ -38,7 +43,7 @@
 	}
 
 	if (watchChanges) {
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(defaultsChanged) name:NSUserDefaultsDidChangeNotification object:nil];
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(defaultsChanged:) name:NSUserDefaultsDidChangeNotification object:nil];
 	} else {
 		[[NSNotificationCenter defaultCenter] removeObserver:self];
 	}
@@ -101,7 +106,9 @@
 
 		if (settingsValue != nil) {
 			if ([settingsValue isKindOfClass:[NSString class]]) {
-				returnVar = [NSString stringWithFormat:@"\"%@\"", (NSString*)settingsValue];
+				NSString *escaped = [(NSString*)settingsValue stringByReplacingOccurrencesOfString:@"\\" withString:@"\\\\"];
+				escaped = [escaped stringByReplacingOccurrencesOfString:@"\"" withString:@"\\\""];
+				returnVar = [NSString stringWithFormat:@"\"%@\"", escaped];
 			} else if ([settingsValue isKindOfClass:[NSNumber class]]) {
 				if ((NSNumber*)settingsValue == (void*)kCFBooleanFalse || (NSNumber*)settingsValue == (void*)kCFBooleanTrue) {
 					// const char * x = [(NSNumber*)settingsValue objCType];
